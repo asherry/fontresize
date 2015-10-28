@@ -40,11 +40,18 @@ function fontresize_config_form() {
     '#description' => t('The default text for the decrease text link.'),
   );
 
+  $form['fontresize_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Text'),
+    '#default_value' => variable_get('fontresize_text', 'text'),
+    '#description' => t('The default text to display in addition to the links.'),
+  );
+
   $form['fontresize_reset_text'] = array(
     '#type' => 'textfield',
     '#title' => t('Reset text'),
     '#default_value' => variable_get('fontresize_reset_text', 'A'),
-    '#description' => t('The defalut text for the reset text link'),
+    '#description' => t('The default text for the reset text link'),
   );
 
   $form['fontresize_reset_show'] = array(
@@ -85,7 +92,13 @@ function fontresize_block_view() {
  */
 function fontresize_theme() {
   return array(
-    'fontresize_widget' => array(),
+    'fontresize_widget' => array(
+      'variables' => array(
+        'decrease' => array(),
+        'reset' => array(),
+        'increase' => array(),
+      ),
+    ),
   );
 }
 
@@ -95,13 +108,14 @@ function fontresize_theme() {
 function theme_fontresize_widget($vars = array()) {
   $content['#attached']['css'][] = _fontresize_css(); 
   $content['#attached']['js'][] = drupal_get_path('module', 'fontresize') . '/fontresize.js';
-  $content['decrease'] = array(
+  // TODO: Order should be customizable and preprocess-able.
+  $content['increase'] = array(
     '#theme' => 'link',
-    '#text' => variable_get('fontresize_decrease_text', '<sup>-</sup>A'),
+    '#text' => variable_get('fontresize_increase_text', '<sup>+</sup>A'),
     '#options' => array(
       'attributes' => array(
-        'class' => array('fontresize-control', 'fontresize-decrease'),
-        'id' => 'text-resize-decrease',
+        'class' => array('fontresize-control', 'fontresize-increase'),
+        'id' => 'text-resize-increase',
       ),
       'html' => TRUE,
     ),
@@ -119,16 +133,22 @@ function theme_fontresize_widget($vars = array()) {
       ),
     );
   }
-  $content['increase'] = array(
+  $content['decrease'] = array(
     '#theme' => 'link',
-    '#text' => variable_get('fontresize_increase_text', '<sup>+</sup>A'),
+    '#text' => variable_get('fontresize_decrease_text', '<sup>-</sup>A'),
     '#options' => array(
       'attributes' => array(
-        'class' => array('fontresize-control', 'fontresize-increase'),
-        'id' => 'text-resize-increase',
+        'class' => array('fontresize-control', 'fontresize-decrease'),
+        'id' => 'text-resize-decrease',
       ),
       'html' => TRUE,
     ),
+  );
+
+  $content['text'] = array(
+    '#prefix' => '<span class="fontresize-text">',
+    '#markup' => variable_get('fontresize_text', 'text'),
+    '#suffix' => '</span>',
   );
 
   return render($content);

@@ -12,10 +12,10 @@
           $this = $(this);
           var cur = $this.css('font-size');
           if ($changer.attr('id') == 'text-resize-increase') {
-            $this.css('font-size', toRem(cur) + inc + 'rem');
+            $this.animate({'font-size': toRem(cur) + inc + 'rem'});
           }
           else if ($changer.attr('id') == 'text-resize-decrease') {
-            $this.css('font-size', toRem(cur) - inc + 'rem');
+            $this.animate({'font-size': toRem(cur) - inc + 'rem'});
           }
           else {
             $this.css('font-size', 'inherit');
