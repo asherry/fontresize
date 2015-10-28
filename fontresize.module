@@ -1,0 +1,148 @@
+<?php
+/**
+ * @file 
+ * fontresize.modul
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function fontresize_menu() {
+  $items = array();
+  $items['admin/config/user-interface/fontresize'] = array(
+    'title' => 'Font Resize',
+    'description' => 'Settings for the Font Resize widget.',
+    'access arguments' => array('administer site configuration'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('fontresize_config_form'),
+    'type' => MENU_NORMAL_ITEM
+  );
+  return $items;
+}
+
+/**
+ * Builder function for admin settings form.
+ */
+function fontresize_config_form() {
+  $form = array();
+
+  $form['fontresize_increase_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Increase text'),
+    '#default_value' => variable_get('fontresize_increase_text', '<sup>+</sup>A'),
+    '#description' => t('The default text for the increase text link.'),
+  );
+
+  $form['fontresize_decrease_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Decrease text'),
+    '#default_value' => variable_get('fontresize_decrease_text', '<sup>-</sup>A'),
+    '#description' => t('The default text for the decrease text link.'),
+  );
+
+  $form['fontresize_reset_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Reset text'),
+    '#default_value' => variable_get('fontresize_reset_text', 'A'),
+    '#description' => t('The defalut text for the reset text link'),
+  );
+
+  $form['fontresize_reset_show'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show reset link'),
+    '#default_value' => variable_get('fontresize_reset_show', TRUE),
+    '#description' => t('Show the reset link'),
+  );
+
+  $form = system_settings_form($form);
+  return $form;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function fontresize_block_info() {
+  // Makes it show up on /admin/build/block page.
+  $blocks[0] = array(
+    'info' => t('Font Resize'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function fontresize_block_view() {
+  // Show the block.
+  $block['subject'] = t('Font Resize');
+  $block['content'] = theme('fontresize_widget');
+  return $block;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function fontresize_theme() {
+  return array(
+    'fontresize_widget' => array(),
+  );
+}
+
+/**
+ * Return HTML for the fontresize widget.
+ */
+function theme_fontresize_widget($vars = array()) {
+  $content['#attached']['css'][] = _fontresize_css(); 
+  $content['#attached']['js'][] = drupal_get_path('module', 'fontresize') . '/fontresize.js';
+  $content['decrease'] = array(
+    '#theme' => 'link',
+    '#text' => variable_get('fontresize_decrease_text', '<sup>-</sup>A'),
+    '#options' => array(
+      'attributes' => array(
+        'class' => array('fontresize-control', 'fontresize-decrease'),
+        'id' => 'text-resize-decrease',
+      ),
+      'html' => TRUE,
+    ),
+  );
+  if (variable_get('fontresize_reset_show', TRUE)) {
+    $content['reset'] = array(
+      '#theme' => 'link',
+      '#text' => 'A',
+      '#options' => array(
+        'attributes' => array(
+          'class' => array('fontresize-control', 'fontresize-reset'),
+          'id' => 'text-resize-reset',
+        ),
+        'html' => TRUE,
+      ),
+    );
+  }
+  $content['increase'] = array(
+    '#theme' => 'link',
+    '#text' => variable_get('fontresize_increase_text', '<sup>+</sup>A'),
+    '#options' => array(
+      'attributes' => array(
+        'class' => array('fontresize-control', 'fontresize-increase'),
+        'id' => 'text-resize-increase',
+      ),
+      'html' => TRUE,
+    ),
+  );
+
+  return render($content);
+}
+
+/**
+ * Helper function to get the necessary CSS file.
+ */
+function _fontresize_css() {
+  ctools_include('css');
+  $filename = ctools_css_retrieve('fontresize');
+  if (!$filename) {
+    $css = array('.resizable *' => array('font-size' => 'inherit !important'));
+    $filename = ctools_css_store('fontresize', ctools_css_assemble($css), FALSE);
+  }
+  return $filename;
+}
