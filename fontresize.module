@@ -161,7 +161,7 @@ function _fontresize_css() {
   ctools_include('css');
   $filename = ctools_css_retrieve('fontresize');
   if (!$filename) {
-    $css = array('.resizable *' => array('font-size' => 'inherit !important'));
+    $css = array('.resizing *' => array('font-size' => 'inherit !important'));
     $filename = ctools_css_store('fontresize', ctools_css_assemble($css), FALSE);
   }
   return $filename;

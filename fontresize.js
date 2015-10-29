@@ -9,7 +9,7 @@
       $('.fontresize-control').click(function(e) {
         var $changer = $(this);
         $('.resizable').each(function() {
-          $this = $(this);
+          $this = $(this).addClass('resizing');
           var cur = $this.css('font-size');
           if ($changer.attr('id') == 'text-resize-increase') {
             $this.animate({'font-size': toRem(cur) + inc + 'rem'});
