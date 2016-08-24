@@ -1,7 +1,7 @@
 <?php
 /**
- * @file 
- * fontresize.modul
+ * @file
+ * Code for fontresize module.
  */
 
 /**
@@ -15,7 +15,7 @@ function fontresize_menu() {
     'access arguments' => array('administer site configuration'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fontresize_config_form'),
-    'type' => MENU_NORMAL_ITEM
+    'type' => MENU_NORMAL_ITEM,
   );
   return $items;
 }
@@ -106,7 +106,7 @@ function fontresize_theme() {
  * Return HTML for the fontresize widget.
  */
 function theme_fontresize_widget($vars = array()) {
-  $content['#attached']['css'][] = _fontresize_css(); 
+  $content['#attached']['css'][] = _fontresize_css();
   $content['#attached']['js'][] = drupal_get_path('module', 'fontresize') . '/fontresize.js';
   // TODO: Order should be customizable and preprocess-able.
   $content['increase'] = array(
